@@ -1,32 +1,58 @@
 { createMemory } = require './memory'
 { CPU } = require './cpu'
 instructions = require './instructions'
+readline = require 'readline'
 
-memory = createMemory 256
-writableBytes = new Uint8Array memory.buffer
+memory = createMemory 256*256
+writableBytes = new Uint8Array memory.ref.buffer
 
 cpu = CPU memory
 
-writableBytes[0] = instructions.MOV_LIT_R1
-writableBytes[1] = 0x12
-writableBytes[2] = 0x34
+IP = 0
+ACC = 1
+R1 = 2
+R2 = 3
 
-writableBytes[3] = instructions.MOV_LIT_R2
-writableBytes[4] = 0xAB
-writableBytes[5] = 0xCD
+i = 0
 
-writableBytes[6] = instructions.ADD_REG_REG
-writableBytes[7] = 2
-writableBytes[8] = 3
+writableBytes[i++] = instructions.MOV_MEM_REG
+writableBytes[i++] = 0x01
+writableBytes[i++] = 0x00
+writableBytes[i++] = R1
 
-cpu.debug()
+writableBytes[i++] = instructions.MOV_LIT_REG
+writableBytes[i++] = 0x00
+writableBytes[i++] = 0x01
+writableBytes[i++] = R2
 
-cpu.step()
-cpu.debug()
+writableBytes[i++] = instructions.ADD_REG_REG
+writableBytes[i++] = R1
+writableBytes[i++] = R2
 
-cpu.step()
-cpu.debug()
+writableBytes[i++] = instructions.MOV_REG_MEM
+writableBytes[i++] = ACC
+writableBytes[i++] = 0x01
+writableBytes[i++] = 0x00
 
-cpu.step()
-cpu.debug()
+writableBytes[i++] = instructions.JMP_NOT_EQ
+writableBytes[i++] = 0x00
+writableBytes[i++] = 0x03
+writableBytes[i++] = 0x00
+writableBytes[i++] = 0x00
 
+interact = readline.createInterface {
+  input: process.stdin
+  output: process.stdout
+}
+
+console.log "Initial state:"
+cpu.register.debug()
+memory.debug cpu.register.getValue 'ip'
+memory.debug 0x0100
+
+
+interact.on 'line', () =>
+  cpu.step()
+  cpu.register.debug()
+  memory.debug cpu.register.getValue 'ip'
+  memory.debug 0x0100

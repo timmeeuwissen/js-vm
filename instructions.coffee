@@ -1,9 +1,19 @@
-MOV_LIT_R1 = 0x10
-MOV_LIT_R2 = 0x11
-ADD_REG_REG = 0x12
+module.exports =
+  NO_OP       : 0x00
 
-module.exports = {
-  MOV_LIT_R1,
-  MOV_LIT_R2,
-  ADD_REG_REG,
-}
+  # move
+  MOV_LIT_REG : 0x10
+  MOV_REG_REG : 0x11
+  MOV_REG_MEM : 0x12
+  MOV_MEM_REG : 0x13
+
+  # operations
+  ADD_REG_REG : 0x14
+
+  # branching
+  JMP_NOT_EQ  : 0x15
+
+  # stack operations
+  PSH_LIT     : 0x16
+  PSH_REG     : 0x17
+  POP         : 0x18
