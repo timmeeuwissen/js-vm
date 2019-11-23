@@ -11,6 +11,11 @@ createRegister = (names) =>
     {}
   );
 
+  nameToIndex = names.reduce(
+    (acc, name, index) => ({...acc, [name]: index}),
+    {}
+  )
+
   getPointerValue = (index, byByte) => memory.get2 (if byByte then index else indexToByte(index))
   setPointerValue = (index, value, byByte) => memory.set2 (if byByte then index else indexToByte(index)), value
 
@@ -29,11 +34,12 @@ createRegister = (names) =>
       console.log "#{name}: 0x#{getValue(name).toString(16).padStart(4, '0')}"
 
   {
-    getValue,
-    setValue,
-    getPointerValue,
-    setPointerValue,
-    debug,
+    getValue
+    setValue
+    getPointerValue
+    setPointerValue
+    debug
+    nameToIndex
   }
 
 module.exports = {

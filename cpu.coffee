@@ -1,4 +1,5 @@
 { createRegister } = require './register'
+{ createStack, requiredRegisters } = require './stack'
 instructions = require './instructions'
 
 CPU = (memory) =>
@@ -6,13 +7,11 @@ CPU = (memory) =>
     'ip', 'acc',
     'r1', 'r2', 'r3', 'r4',
     'r5', 'r6', 'r7', 'r8',
-    'sp', 'fp',
+    ...requiredRegisters,
   ]
 
   register = createRegister registerNames
-
-  register.setValue 'sp', memory.ref.byteLength - 1 - 1
-  register.setValue 'fp', memory.ref.byteLength - 1 - 1
+  stack = createStack memory, register
 
   fetch8 = () =>
     nextInstructionAddress = register.getValue 'ip'
@@ -25,16 +24,6 @@ CPU = (memory) =>
     instruction = memory.get2 nextInstructionAddress
     register.setValue 'ip', nextInstructionAddress + 2
     instruction
-
-  push = (value) =>
-    currentSP = register.getValue 'sp'
-    memory.set2 currentSP, value
-    register.setValue 'sp', currentSP - 2
-
-  pop = () =>
-    nextSP = (register.getValue 'sp') + 2
-    register.setValue 'sp', nextSP
-    memory.get2 nextSP
 
   execute = (instruction) =>
     switch instruction
@@ -77,13 +66,13 @@ CPU = (memory) =>
           register.setValue 'ip', memoryTo
 
       when instructions.PSH_LIT
-        push fetch16()
+        stack.push fetch16()
 
       when instructions.PSH_REG
-        push register.getPointerValue fetch8()
+        stack.push register.getPointerValue fetch8()
 
       when instructions.POP
-        register.setPointerValue fetch8(), pop()
+        register.setPointerValue fetch8(), stack.pop()
 
       else
         throw new Error "Unknown instruction #{instruction.toString(16).padStart(2, '0')}"
@@ -92,8 +81,9 @@ CPU = (memory) =>
     execute fetch8()
 
   {
-    step,
-    register,
+    step
+    register
+    stack
   }
 
 module.exports = {
