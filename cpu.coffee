@@ -32,9 +32,9 @@ CPU = (memory) =>
     register.setValue 'sp', currentSP - 2
 
   pop = () =>
-    nextSP = register.getValue 'sp' + 2
-    memory.get2 nextSP
+    nextSP = (register.getValue 'sp') + 2
     register.setValue 'sp', nextSP
+    memory.get2 nextSP
 
   execute = (instruction) =>
     switch instruction

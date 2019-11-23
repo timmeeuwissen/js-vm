@@ -12,33 +12,20 @@ IP = 0
 ACC = 1
 R1 = 2
 R2 = 3
+R3 = 4
+R4 = 5
+R5 = 6
+R6 = 7
+R7 = 8
+R8 = 9
 
 i = 0
 
-writableBytes[i++] = instructions.MOV_MEM_REG
-writableBytes[i++] = 0x01
-writableBytes[i++] = 0x00
-writableBytes[i++] = R1
+# require('./programs/count') i, writableBytes
+require('./programs/stack_move') i, writableBytes
 
-writableBytes[i++] = instructions.MOV_LIT_REG
-writableBytes[i++] = 0x00
-writableBytes[i++] = 0x01
-writableBytes[i++] = R2
 
-writableBytes[i++] = instructions.ADD_REG_REG
-writableBytes[i++] = R1
-writableBytes[i++] = R2
 
-writableBytes[i++] = instructions.MOV_REG_MEM
-writableBytes[i++] = ACC
-writableBytes[i++] = 0x01
-writableBytes[i++] = 0x00
-
-writableBytes[i++] = instructions.JMP_NOT_EQ
-writableBytes[i++] = 0x00
-writableBytes[i++] = 0x03
-writableBytes[i++] = 0x00
-writableBytes[i++] = 0x00
 
 interact = readline.createInterface {
   input: process.stdin
