@@ -1,6 +1,9 @@
 { createMemory} = require './memory'
 
-createRegister = (names) =>
+createRegister = (clusters) =>
+  names = Object.values(clusters).reduce ((acc, registerList) =>
+    ([...acc, ...registerList])), []
+
   registerByteLength = 2
   memory = createMemory(names.length * registerByteLength)
 
@@ -29,6 +32,11 @@ createRegister = (names) =>
       throw new Error "Unknown name #{name} to store in register"
     setPointerValue nameToPointer[name], value, true
 
+  getCluster = (clusterName) =>
+    if !clusters.hasOwnProperty clusterName
+      throw new Error "Unknown cluster name #{clusterName} in register clusters"
+    clusters[clusterName]
+
   debug = () =>
     names.forEach (name) =>
       console.log "#{name}: 0x#{getValue(name).toString(16).padStart(4, '0')}"
@@ -40,6 +48,7 @@ createRegister = (names) =>
     setPointerValue
     debug
     nameToIndex
+    getCluster
   }
 
 module.exports = {

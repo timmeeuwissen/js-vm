@@ -1,16 +1,15 @@
 { createRegister } = require './register'
-{ createStack, requiredRegisters } = require './stack'
+{ createStack, requiredRegisters: stackRegisters } = require './stack'
 instructions = require './instructions'
 
 CPU = (memory) =>
-  registerNames = [
-    'ip', 'acc',
-    'r1', 'r2', 'r3', 'r4',
-    'r5', 'r6', 'r7', 'r8',
-    ...requiredRegisters,
-  ]
+  registerClusters = {
+    base: ['ip', 'acc']
+    generalPurpose: ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8']
+    stackRegisters
+  }
 
-  register = createRegister registerNames
+  register = createRegister registerClusters
   stack = createStack memory, register
 
   fetch8 = () =>
@@ -73,6 +72,16 @@ CPU = (memory) =>
 
       when instructions.POP
         register.setPointerValue fetch8(), stack.pop()
+
+      when instructions.CAL_LIT
+        memoryTo = fetch16()
+        stack.pushRegister()
+        register.setValue 'ip', memoryTo
+
+      when instructions.CAL_REG
+        memoryTo = register.getPointerValue fetch8()
+        stack.pushRegister()
+        register.setvalue 'ip', memoryTo
 
       else
         throw new Error "Unknown instruction #{instruction.toString(16).padStart(2, '0')}"

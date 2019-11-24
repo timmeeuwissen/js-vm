@@ -11,7 +11,8 @@ cpu = CPU memory
 i = 0
 
 # require('./programs/count') cpu, i, writableBytes
-require('./programs/stack_move') cpu, i, writableBytes
+# require('./programs/stack_move') cpu, i, writableBytes
+require('./programs/subroutine') cpu, i, writableBytes
 
 interact = readline.createInterface {
   input: process.stdin

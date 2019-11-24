@@ -17,3 +17,6 @@ module.exports =
   PSH_LIT     : 0x16
   PSH_REG     : 0x17
   POP         : 0x18
+  CAL_LIT     : 0x1a
+  CAL_REG     : 0x1b
+  RET         : 0x1c
